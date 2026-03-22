@@ -1,17 +1,38 @@
+from enum import Enum
+from typing import Callable
+
+
+class RiemannSumDirection(Enum):
+    LEFT = 0
+    RIGHT = 1
+    MIDDLE = 2
+
+
 class RiemannSum:
-    def __init__(self, start: float, end: float, steps: int):
+    def __init__(
+        self,
+        start: float,
+        end: float,
+        func: Callable[[float], float],
+        steps: int,
+        direction: RiemannSumDirection = RiemannSumDirection.LEFT,
+    ):
         """
-        Calculates the area of a simple parable (x²) using Riemann Sum.
+        Calculates the Riemann Sum of a given function over an interval.
 
         :param start: The start of the interval
         :param end: The end of the interval
-        :param steps: The number of steps to calculate the area
+        :param func: The function to integrate
+        :param steps: The number of rectangles to use
+        :param direction: Whether to sample from the left, right, or midpoint of each step
         """
 
         self.start = start
         self.end = end
         self.steps = steps
         self.delta_x = (end - start) / steps
+        self.func = func
+        self.direction = direction
 
         self.area = self.get_area()
 
@@ -19,10 +40,8 @@ class RiemannSum:
         acc: float = 0
 
         for step in range(self.steps):
-            start, _ = self._get_steps_coordinates(step)
-
             width = self.delta_x
-            height = self._get_height(start)
+            height = self._get_height(self._get_height_position(step))
 
             area = width * height
             acc += area
@@ -36,4 +55,14 @@ class RiemannSum:
         return start, finish
 
     def _get_height(self, x: float) -> float:
-        return x**2
+        return self.func(x)
+
+    def _get_height_position(self, step: int) -> float:
+        start, finish = self._get_steps_coordinates(step)
+
+        if self.direction == RiemannSumDirection.LEFT:
+            return start
+        elif self.direction == RiemannSumDirection.RIGHT:
+            return finish
+
+        return (start + finish) / 2

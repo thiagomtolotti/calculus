@@ -1,4 +1,4 @@
-from model.rienmann_sum import RiemannSum
+from model.rienmann_sum import RiemannSum, RiemannSumDirection
 
 
 def main():
@@ -15,7 +15,9 @@ def main():
 
 
 def get_total_area(start: int, end: int, steps: int) -> float:
-    return RiemannSum(start, end, steps).area
+    return RiemannSum(
+        start, end, lambda x: x**2, steps, RiemannSumDirection.MIDDLE
+    ).area
 
 
 main()
