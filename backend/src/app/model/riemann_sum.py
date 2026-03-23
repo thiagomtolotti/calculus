@@ -27,6 +27,21 @@ class RiemannSum:
         :param direction: Whether to sample from the left, right, or midpoint of each step
         """
 
+        if steps <= 0:
+            raise ValueError("Steps must be greater than zero")
+
+        if not isinstance(start, (float, int)) or not isinstance(end, (float, int)):  # type: ignore
+            raise TypeError("Start and end must be floats")
+
+        if start >= end:
+            raise ValueError("Start must be less than end")
+
+        if not callable(func):
+            raise TypeError("Function must be callable")
+
+        if not isinstance(direction, RiemannSumDirection):  # type: ignore
+            raise TypeError("Direction must be an instance of RiemannSumDirection")
+
         self.start = start
         self.end = end
         self.steps = steps

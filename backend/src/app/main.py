@@ -1,4 +1,4 @@
-from model.rienmann_sum import RiemannSum, RiemannSumDirection
+from model.riemann_sum import RiemannSum, RiemannSumDirection
 
 
 def main():
