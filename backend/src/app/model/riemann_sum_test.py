@@ -129,3 +129,25 @@ class TestRiemannSum:
                 func=self.function,
                 steps=self.steps,
             ).area
+
+    def test_rectangle(self):
+        area = RiemannSum(
+            self.start,
+            self.end,
+            lambda x: 1,
+            self.steps,
+            direction=RiemannSumDirection.LEFT,
+        ).area
+
+        assert math.isclose(area, 1, rel_tol=1e-7)
+
+    def test_zero_area(self):
+        area = RiemannSum(
+            self.start,
+            self.end,
+            lambda x: 0,
+            self.steps,
+            direction=RiemannSumDirection.LEFT,
+        ).area
+
+        assert math.isclose(area, 0, rel_tol=1e-7)
