@@ -151,3 +151,21 @@ class TestRiemannSum:
         ).total
 
         assert math.isclose(area, 0, rel_tol=1e-7)
+
+    def test_doubled_func(self):
+        area = RiemannSum(
+            self.start, self.end, lambda x: 2, self.steps, RiemannSumDirection.LEFT
+        ).total
+
+        assert math.isclose(area, 2)
+
+    def test_cone(self):
+        def area_func(x: float) -> float:
+            return x
+
+        def volume_func(x: float) -> float:
+            return math.pi * (area_func(x) ** 2)
+
+        area = RiemannSum(0, 1, volume_func, self.steps, RiemannSumDirection.LEFT).total
+
+        assert math.isclose(area, math.pi / 3, rel_tol=1e-2)
