@@ -21,7 +21,7 @@ class TestRiemannSum:
             self.function,
             self.steps,
             direction=RiemannSumDirection.LEFT,
-        ).area
+        ).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
@@ -32,7 +32,7 @@ class TestRiemannSum:
             self.function,
             self.steps,
             direction=RiemannSumDirection.MIDDLE,
-        ).area
+        ).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-3)
 
@@ -43,22 +43,22 @@ class TestRiemannSum:
             self.function,
             self.steps,
             direction=RiemannSumDirection.RIGHT,
-        ).area
+        ).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
     def test_default_direction(self):
-        area = RiemannSum(self.start, self.end, self.function, self.steps).area
+        area = RiemannSum(self.start, self.end, self.function, self.steps).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
     def test_zero_steps(self):
         with pytest.raises(ValueError):
-            RiemannSum(self.start, self.end, self.function, steps=0).area
+            RiemannSum(self.start, self.end, self.function, steps=0).total
 
     def test_negative_steps(self):
         with pytest.raises(ValueError):
-            RiemannSum(self.start, self.end, self.function, steps=-1).area
+            RiemannSum(self.start, self.end, self.function, steps=-1).total
 
     def test_non_callable_function(self):
         with pytest.raises(TypeError):
@@ -67,7 +67,7 @@ class TestRiemannSum:
                 self.end,
                 func=cast(Any, "not a function"),
                 steps=self.steps,
-            ).area
+            ).total
 
     def test_non_numeric_start_end(self):
         with pytest.raises(TypeError):
@@ -76,7 +76,7 @@ class TestRiemannSum:
                 end=cast(Any, "not a number"),
                 func=self.function,
                 steps=self.steps,
-            ).area
+            ).total
 
     def test_non_numeric_steps(self):
         with pytest.raises(TypeError):
@@ -85,7 +85,7 @@ class TestRiemannSum:
                 self.end,
                 self.function,
                 steps=cast(Any, "not a number"),
-            ).area
+            ).total
 
     def test_non_numeric_direction(self):
         with pytest.raises(TypeError):
@@ -97,7 +97,7 @@ class TestRiemannSum:
                 direction=cast(
                     Any, "Direction must be an instance of RiemannSumDirection"
                 ),
-            ).area
+            ).total
 
     def test_large_steps(self):
         area = RiemannSum(
@@ -106,7 +106,7 @@ class TestRiemannSum:
             self.function,
             steps=1000000,
             direction=RiemannSumDirection.MIDDLE,
-        ).area
+        ).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-4)
 
@@ -117,7 +117,7 @@ class TestRiemannSum:
             self.function,
             steps=10,
             direction=RiemannSumDirection.MIDDLE,
-        ).area
+        ).total
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-1)
 
@@ -128,7 +128,7 @@ class TestRiemannSum:
                 end=0,
                 func=self.function,
                 steps=self.steps,
-            ).area
+            ).total
 
     def test_rectangle(self):
         area = RiemannSum(
@@ -137,7 +137,7 @@ class TestRiemannSum:
             lambda x: 1,
             self.steps,
             direction=RiemannSumDirection.LEFT,
-        ).area
+        ).total
 
         assert math.isclose(area, 1, rel_tol=1e-7)
 
@@ -148,6 +148,6 @@ class TestRiemannSum:
             lambda x: 0,
             self.steps,
             direction=RiemannSumDirection.LEFT,
-        ).area
+        ).total
 
         assert math.isclose(area, 0, rel_tol=1e-7)

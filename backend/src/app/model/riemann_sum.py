@@ -49,9 +49,9 @@ class RiemannSum:
         self.func = func
         self.direction = direction
 
-        self.area = self.get_area()
+        self.total = self.integrate()
 
-    def get_area(self) -> float:
+    def integrate(self) -> float:
         acc: float = 0
 
         for step in range(self.steps):
