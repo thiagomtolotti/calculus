@@ -1,4 +1,6 @@
 import argparse
+import math
+from typing import Callable
 
 from model.riemann_sum import RiemannSum, RiemannSumDirection
 
@@ -11,6 +13,9 @@ def main():
     start = 0
     end = 1
     steps = 1000
+
+    def func(x: float) -> float:
+        return math.sqrt(1 - x**2)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -25,14 +30,15 @@ def main():
 
     args = parser.parse_args()
 
-    area = get_total_area(args.start, args.end, args.steps)
+    area = get_total_area(args.start, args.end, args.steps, func)
+
     print("Total Area: ", area)
 
 
-def get_total_area(start: int, end: int, steps: int) -> float:
-    return RiemannSum(
-        start, end, lambda x: x**2, steps, RiemannSumDirection.MIDDLE
-    ).area
+def get_total_area(
+    start: int, end: int, steps: int, func: Callable[[float], float]
+) -> float:
+    return RiemannSum(start, end, func, steps, RiemannSumDirection.MIDDLE).area
 
 
 main()
