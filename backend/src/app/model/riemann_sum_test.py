@@ -47,6 +47,17 @@ class TestRiemannSum:
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
+    def test_trapezoid(self):
+        area = RiemannSum(
+            self.start,
+            self.end,
+            self.function,
+            self.steps,
+            direction=RiemannSumDirection.TRAPEZIUS,
+        ).total
+
+        assert math.isclose(area, 1 / 3, rel_tol=1e-2)
+
     def test_default_direction(self):
         area = RiemannSum(self.start, self.end, self.function, self.steps).total
 

@@ -6,6 +6,7 @@ class RiemannSumDirection(Enum):
     LEFT = 0
     RIGHT = 1
     MIDDLE = 2
+    TRAPEZIUS = 3
 
 
 class RiemannSum:
@@ -55,11 +56,7 @@ class RiemannSum:
         acc: float = 0
 
         for step in range(self.steps):
-            width = self.delta_x
-            height = self._get_height(self._get_height_position(step))
-
-            area = width * height
-            acc += area
+            acc += self._get_area(step)
 
         return acc
 
@@ -72,7 +69,7 @@ class RiemannSum:
     def _get_height(self, x: float) -> float:
         return self.func(x)
 
-    def _get_height_position(self, step: int) -> float:
+    def _get_effective_x(self, step: int) -> float:
         start, finish = self._get_steps_coordinates(step)
 
         if self.direction == RiemannSumDirection.LEFT:
@@ -81,3 +78,18 @@ class RiemannSum:
             return finish
 
         return (start + finish) / 2
+
+    def _get_area(self, step: int) -> float:
+        if self.direction == RiemannSumDirection.TRAPEZIUS:
+            start, finish = self._get_steps_coordinates(step)
+
+            start_height = self._get_height(start)
+            end_height = self._get_height(finish)
+            triangle_height = end_height - start_height
+
+            return (self.delta_x * start_height) + (self.delta_x * triangle_height) / 2
+
+        effective_x = self._get_effective_x(step)
+        triangle_height = self._get_height(effective_x)
+
+        return self.delta_x * triangle_height

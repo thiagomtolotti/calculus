@@ -2,9 +2,10 @@ import argparse
 import math
 from typing import Callable
 
-from backend.src.app.model.disk_method import get_volume_disk_method
-from backend.src.app.model.shell_method import get_volume_shell_method
 from model.riemann_sum import RiemannSum, RiemannSumDirection
+
+from model.disk_method import get_volume_disk_method
+from model.shell_method import get_volume_shell_method
 
 
 def main():
@@ -33,16 +34,24 @@ def main():
     args = parser.parse_args()
 
     area = get_total_area(args.start, args.end, args.steps, func)
+    trapezoid_area = get_total_area(
+        args.start, args.end, args.steps, func, RiemannSumDirection.TRAPEZIUS
+    )
     volume = get_volume_disk_method(args.start, args.end, args.steps, func)
     shell = get_volume_shell_method(args.start, args.end, args.steps, func)
 
-    print("Total Area: ", area)
-    print("Disk Volume: ", volume)
-    print("Shell Volume:", shell)
+    print("Total Area: \t\t", area)
+    print("Trapezoid Area: \t", trapezoid_area)
+    print("Disk Volume: \t\t", volume)
+    print("Shell Volume: \t\t", shell)
 
 
 def get_total_area(
-    start: int, end: int, steps: int, func: Callable[[float], float]
+    start: int,
+    end: int,
+    steps: int,
+    func: Callable[[float], float],
+    direction: RiemannSumDirection = RiemannSumDirection.MIDDLE,
 ) -> float:
     return RiemannSum(start, end, func, steps, RiemannSumDirection.MIDDLE).total
 
