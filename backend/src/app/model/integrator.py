@@ -67,16 +67,6 @@ class Integrator:
     def _get_height(self, x: float) -> float:
         return self.func(x)
 
-    def _get_effective_x(self, step: int) -> float:
-        start, finish = self._get_steps_coordinates(step)
-
-        if self.method == IntegrationMethod.LEFT:
-            return start
-        elif self.method == IntegrationMethod.RIGHT:
-            return finish
-
-        return (start + finish) / 2
-
     def _get_slice(self, step: int) -> float:
         x_i = self.start + step * self.dx
         x_next = x_i + self.dx
