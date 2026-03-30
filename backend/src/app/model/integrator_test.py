@@ -2,7 +2,7 @@ import math
 import pytest
 
 from typing import Any, Callable, cast
-from .integrator import Integrator, IntegratorMethod
+from .integrator import Integrator, IntegrationMethod
 
 
 class TestRiemannSum:
@@ -20,7 +20,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            method=IntegratorMethod.LEFT,
+            method=IntegrationMethod.LEFT,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
@@ -31,7 +31,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            method=IntegratorMethod.MIDPOINT,
+            method=IntegrationMethod.MIDPOINT,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-3)
@@ -42,7 +42,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            method=IntegratorMethod.RIGHT,
+            method=IntegrationMethod.RIGHT,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
@@ -53,7 +53,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            method=IntegratorMethod.TRAPEZOIDAL,
+            method=IntegrationMethod.TRAPEZOIDAL,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
@@ -116,7 +116,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             steps=1000000,
-            method=IntegratorMethod.MIDPOINT,
+            method=IntegrationMethod.MIDPOINT,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-4)
@@ -127,7 +127,7 @@ class TestRiemannSum:
             self.end,
             self.function,
             steps=10,
-            method=IntegratorMethod.MIDPOINT,
+            method=IntegrationMethod.MIDPOINT,
         ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-1)
@@ -147,7 +147,7 @@ class TestRiemannSum:
             self.end,
             lambda x: 1,
             self.steps,
-            method=IntegratorMethod.LEFT,
+            method=IntegrationMethod.LEFT,
         ).calculate()
 
         assert math.isclose(area, 1, rel_tol=1e-7)
@@ -158,14 +158,14 @@ class TestRiemannSum:
             self.end,
             lambda x: 0,
             self.steps,
-            method=IntegratorMethod.LEFT,
+            method=IntegrationMethod.LEFT,
         ).calculate()
 
         assert math.isclose(area, 0, rel_tol=1e-7)
 
     def test_doubled_func(self):
         area = Integrator(
-            self.start, self.end, lambda x: 2, self.steps, IntegratorMethod.LEFT
+            self.start, self.end, lambda x: 2, self.steps, IntegrationMethod.LEFT
         ).calculate()
 
         assert math.isclose(area, 2)
@@ -178,7 +178,7 @@ class TestRiemannSum:
             return math.pi * (area_func(x) ** 2)
 
         area = Integrator(
-            0, 1, volume_func, self.steps, IntegratorMethod.LEFT
+            0, 1, volume_func, self.steps, IntegrationMethod.LEFT
         ).calculate()
 
         assert math.isclose(area, math.pi / 3, rel_tol=1e-2)
