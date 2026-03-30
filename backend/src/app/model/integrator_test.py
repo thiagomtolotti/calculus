@@ -2,7 +2,7 @@ import math
 import pytest
 
 from typing import Any, Callable, cast
-from .integrator import Integrator, IntegratorDirection
+from .integrator import Integrator, IntegratorMethod
 
 
 class TestRiemannSum:
@@ -20,8 +20,8 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            direction=IntegratorDirection.LEFT,
-        ).total
+            method=IntegratorMethod.LEFT,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
@@ -31,8 +31,8 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            direction=IntegratorDirection.MIDPOINT,
-        ).total
+            method=IntegratorMethod.MIDPOINT,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-3)
 
@@ -42,8 +42,8 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            direction=IntegratorDirection.RIGHT,
-        ).total
+            method=IntegratorMethod.RIGHT,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
@@ -53,23 +53,23 @@ class TestRiemannSum:
             self.end,
             self.function,
             self.steps,
-            direction=IntegratorDirection.TRAPEZOIDAL,
-        ).total
+            method=IntegratorMethod.TRAPEZOIDAL,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
     def test_default_direction(self):
-        area = Integrator(self.start, self.end, self.function, self.steps).total
+        area = Integrator(self.start, self.end, self.function, self.steps).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-2)
 
     def test_zero_steps(self):
         with pytest.raises(ValueError):
-            Integrator(self.start, self.end, self.function, steps=0).total
+            Integrator(self.start, self.end, self.function, steps=0).calculate()
 
     def test_negative_steps(self):
         with pytest.raises(ValueError):
-            Integrator(self.start, self.end, self.function, steps=-1).total
+            Integrator(self.start, self.end, self.function, steps=-1).calculate()
 
     def test_non_callable_function(self):
         with pytest.raises(TypeError):
@@ -78,7 +78,7 @@ class TestRiemannSum:
                 self.end,
                 func=cast(Any, "not a function"),
                 steps=self.steps,
-            ).total
+            ).calculate()
 
     def test_non_numeric_start_end(self):
         with pytest.raises(TypeError):
@@ -87,7 +87,7 @@ class TestRiemannSum:
                 end=cast(Any, "not a number"),
                 func=self.function,
                 steps=self.steps,
-            ).total
+            ).calculate()
 
     def test_non_numeric_steps(self):
         with pytest.raises(TypeError):
@@ -96,7 +96,7 @@ class TestRiemannSum:
                 self.end,
                 self.function,
                 steps=cast(Any, "not a number"),
-            ).total
+            ).calculate()
 
     def test_non_numeric_direction(self):
         with pytest.raises(TypeError):
@@ -105,10 +105,10 @@ class TestRiemannSum:
                 self.end,
                 self.function,
                 self.steps,
-                direction=cast(
+                method=cast(
                     Any, "Direction must be an instance of RiemannSumDirection"
                 ),
-            ).total
+            ).calculate()
 
     def test_large_steps(self):
         area = Integrator(
@@ -116,8 +116,8 @@ class TestRiemannSum:
             self.end,
             self.function,
             steps=1000000,
-            direction=IntegratorDirection.MIDPOINT,
-        ).total
+            method=IntegratorMethod.MIDPOINT,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-4)
 
@@ -127,8 +127,8 @@ class TestRiemannSum:
             self.end,
             self.function,
             steps=10,
-            direction=IntegratorDirection.MIDPOINT,
-        ).total
+            method=IntegratorMethod.MIDPOINT,
+        ).calculate()
 
         assert math.isclose(area, 1 / 3, rel_tol=1e-1)
 
@@ -139,7 +139,7 @@ class TestRiemannSum:
                 end=0,
                 func=self.function,
                 steps=self.steps,
-            ).total
+            ).calculate()
 
     def test_rectangle(self):
         area = Integrator(
@@ -147,8 +147,8 @@ class TestRiemannSum:
             self.end,
             lambda x: 1,
             self.steps,
-            direction=IntegratorDirection.LEFT,
-        ).total
+            method=IntegratorMethod.LEFT,
+        ).calculate()
 
         assert math.isclose(area, 1, rel_tol=1e-7)
 
@@ -158,15 +158,15 @@ class TestRiemannSum:
             self.end,
             lambda x: 0,
             self.steps,
-            direction=IntegratorDirection.LEFT,
-        ).total
+            method=IntegratorMethod.LEFT,
+        ).calculate()
 
         assert math.isclose(area, 0, rel_tol=1e-7)
 
     def test_doubled_func(self):
         area = Integrator(
-            self.start, self.end, lambda x: 2, self.steps, IntegratorDirection.LEFT
-        ).total
+            self.start, self.end, lambda x: 2, self.steps, IntegratorMethod.LEFT
+        ).calculate()
 
         assert math.isclose(area, 2)
 
@@ -177,6 +177,8 @@ class TestRiemannSum:
         def volume_func(x: float) -> float:
             return math.pi * (area_func(x) ** 2)
 
-        area = Integrator(0, 1, volume_func, self.steps, IntegratorDirection.LEFT).total
+        area = Integrator(
+            0, 1, volume_func, self.steps, IntegratorMethod.LEFT
+        ).calculate()
 
         assert math.isclose(area, math.pi / 3, rel_tol=1e-2)

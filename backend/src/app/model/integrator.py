@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Callable
 
 
-class IntegratorDirection(Enum):
+class IntegratorMethod(Enum):
     LEFT = 0
     RIGHT = 1
     MIDPOINT = 2
@@ -16,7 +16,7 @@ class Integrator:
         end: float,
         func: Callable[[float], float],
         steps: int,
-        direction: IntegratorDirection = IntegratorDirection.LEFT,
+        method: IntegratorMethod = IntegratorMethod.LEFT,
     ):
         """
         Calculates the Riemann Sum of a given function over an interval.
@@ -40,29 +40,27 @@ class Integrator:
         if not callable(func):
             raise TypeError("Function must be callable")
 
-        if not isinstance(direction, IntegratorDirection):  # type: ignore
+        if not isinstance(method, IntegratorMethod):  # type: ignore
             raise TypeError("Direction must be an instance of RiemannSumDirection")
 
         self.func = func
         self.start = start
         self.end = end
         self.steps = steps
-        self.delta_x = (end - start) / steps
-        self.direction = direction
+        self.dx = (end - start) / steps
+        self.direction = method
 
-        self.total = self.integrate()
-
-    def integrate(self) -> float:
+    def calculate(self) -> float:
         acc: float = 0
 
         for step in range(self.steps):
-            acc += self._get_area(step)
+            acc += self._get_slice(step)
 
         return acc
 
     def _get_steps_coordinates(self, step: int) -> tuple[float, float]:
-        start = self.start + step * self.delta_x
-        finish = start + self.delta_x
+        start = self.start + step * self.dx
+        finish = start + self.dx
 
         return start, finish
 
@@ -72,24 +70,24 @@ class Integrator:
     def _get_effective_x(self, step: int) -> float:
         start, finish = self._get_steps_coordinates(step)
 
-        if self.direction == IntegratorDirection.LEFT:
+        if self.direction == IntegratorMethod.LEFT:
             return start
-        elif self.direction == IntegratorDirection.RIGHT:
+        elif self.direction == IntegratorMethod.RIGHT:
             return finish
 
         return (start + finish) / 2
 
-    def _get_area(self, step: int) -> float:
-        if self.direction == IntegratorDirection.TRAPEZOIDAL:
+    def _get_slice(self, step: int) -> float:
+        if self.direction == IntegratorMethod.TRAPEZOIDAL:
             start, finish = self._get_steps_coordinates(step)
 
             start_height = self._get_height(start)
             end_height = self._get_height(finish)
             triangle_height = end_height - start_height
 
-            return (self.delta_x * start_height) + (self.delta_x * triangle_height) / 2
+            return (self.dx * start_height) + (self.dx * triangle_height) / 2
 
         effective_x = self._get_effective_x(step)
         triangle_height = self._get_height(effective_x)
 
-        return self.delta_x * triangle_height
+        return self.dx * triangle_height

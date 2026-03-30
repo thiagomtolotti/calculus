@@ -4,7 +4,7 @@ from typing import Callable
 
 from model import (
     Integrator,
-    IntegratorDirection,
+    IntegratorMethod,
     get_volume_disk_method,
     get_volume_shell_method,
 )
@@ -37,7 +37,7 @@ def main():
 
     area = get_total_area(args.start, args.end, args.steps, func)
     trapezoid_area = get_total_area(
-        args.start, args.end, args.steps, func, IntegratorDirection.TRAPEZOIDAL
+        args.start, args.end, args.steps, func, IntegratorMethod.TRAPEZOIDAL
     )
     volume = get_volume_disk_method(args.start, args.end, args.steps, func)
     shell = get_volume_shell_method(args.start, args.end, args.steps, func)
@@ -53,9 +53,9 @@ def get_total_area(
     end: int,
     steps: int,
     func: Callable[[float], float],
-    direction: IntegratorDirection = IntegratorDirection.MIDPOINT,
+    direction: IntegratorMethod = IntegratorMethod.MIDPOINT,
 ) -> float:
-    return Integrator(start, end, func, steps, IntegratorDirection.MIDPOINT).total
+    return Integrator(start, end, func, steps, IntegratorMethod.MIDPOINT).calculate()
 
 
 main()
