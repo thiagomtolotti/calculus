@@ -1,7 +1,7 @@
 import math
 from typing import Callable
 
-from model.riemann_sum import RiemannSum
+from .integrator import Integrator
 
 
 def get_volume_disk_method(
@@ -10,4 +10,4 @@ def get_volume_disk_method(
     def volume_func(x: float) -> float:
         return math.pi * (func(x) ** 2)
 
-    return RiemannSum(start, end, volume_func, steps).total
+    return Integrator(start, end, volume_func, steps).total

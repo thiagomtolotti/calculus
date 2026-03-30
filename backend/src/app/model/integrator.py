@@ -2,21 +2,21 @@ from enum import Enum
 from typing import Callable
 
 
-class RiemannSumDirection(Enum):
+class IntegratorDirection(Enum):
     LEFT = 0
     RIGHT = 1
-    MIDDLE = 2
-    TRAPEZIUS = 3
+    MIDPOINT = 2
+    TRAPEZOIDAL = 3
 
 
-class RiemannSum:
+class Integrator:
     def __init__(
         self,
         start: float,
         end: float,
         func: Callable[[float], float],
         steps: int,
-        direction: RiemannSumDirection = RiemannSumDirection.LEFT,
+        direction: IntegratorDirection = IntegratorDirection.LEFT,
     ):
         """
         Calculates the Riemann Sum of a given function over an interval.
@@ -40,14 +40,14 @@ class RiemannSum:
         if not callable(func):
             raise TypeError("Function must be callable")
 
-        if not isinstance(direction, RiemannSumDirection):  # type: ignore
+        if not isinstance(direction, IntegratorDirection):  # type: ignore
             raise TypeError("Direction must be an instance of RiemannSumDirection")
 
+        self.func = func
         self.start = start
         self.end = end
         self.steps = steps
         self.delta_x = (end - start) / steps
-        self.func = func
         self.direction = direction
 
         self.total = self.integrate()
@@ -72,15 +72,15 @@ class RiemannSum:
     def _get_effective_x(self, step: int) -> float:
         start, finish = self._get_steps_coordinates(step)
 
-        if self.direction == RiemannSumDirection.LEFT:
+        if self.direction == IntegratorDirection.LEFT:
             return start
-        elif self.direction == RiemannSumDirection.RIGHT:
+        elif self.direction == IntegratorDirection.RIGHT:
             return finish
 
         return (start + finish) / 2
 
     def _get_area(self, step: int) -> float:
-        if self.direction == RiemannSumDirection.TRAPEZIUS:
+        if self.direction == IntegratorDirection.TRAPEZOIDAL:
             start, finish = self._get_steps_coordinates(step)
 
             start_height = self._get_height(start)
