@@ -7,6 +7,7 @@ from model import (
     IntegrationMethod,
     get_volume_disk_method,
     get_volume_shell_method,
+    get_arc_length,
 )
 
 
@@ -41,11 +42,13 @@ def main():
     )
     volume = get_volume_disk_method(args.start, args.end, args.steps, func)
     shell = get_volume_shell_method(args.start, args.end, args.steps, func)
+    arc = get_arc_length(args.start, args.end, func, args.steps)
 
     print("Total Area: \t\t", area)
     print("Trapezoid Area: \t", trapezoid_area)
     print("Disk Volume: \t\t", volume)
     print("Shell Volume: \t\t", shell)
+    print("Arc length: \t\t", arc)
 
 
 def get_total_area(
